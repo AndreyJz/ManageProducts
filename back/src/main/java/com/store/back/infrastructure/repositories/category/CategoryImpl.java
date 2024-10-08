@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Service
 public class CategoryImpl implements ICategoryService {
@@ -54,5 +54,24 @@ public class CategoryImpl implements ICategoryService {
             categoryRepository.delete(categoryOptional.get());
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Map<String, String> getFields() {
+        Map<String, String> data = new LinkedHashMap<>();
+
+        Category  category = new Category();
+        Field[] fields = category.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            String fieldName = field.getName();
+            String fieldType = field.getType().getSimpleName();
+
+            if (!(fieldName.equals("id") || fieldName.equals("products"))) {
+                data.put(fieldName, fieldType);
+            }
+        }
+
+        return data;
     }
 }

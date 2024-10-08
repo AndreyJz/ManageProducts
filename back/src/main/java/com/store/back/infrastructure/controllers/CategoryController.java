@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -53,6 +54,12 @@ public class CategoryController {
             return ResponseEntity.ok(categoryOptional.orElseThrow());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/fields")
+    public ResponseEntity<?> fields() {
+        Map<String, String> fields = categoryService.getFields();
+        return ResponseEntity.ok(fields);
     }
 
 }

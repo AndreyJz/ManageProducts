@@ -3,7 +3,6 @@ import axios from "axios";
 import './List.css'
 import App from "../App.tsx";
 import Create from "./Create.tsx";
-// import image from "../assets/customer.png";
 
 type Props = {
     name: string;
@@ -14,12 +13,13 @@ export default function List(props : Props) {
     const [loading, setLoading] = useState<boolean>(true)
     const [showList, setShowList] = useState<boolean>(true);
     const [showPopUp, setShowPopUp] = useState<boolean>(false)
-    let image : string = `/src/assets/${props.name.toLowerCase()}.png`;
+    const image : string = `/src/assets/${props.name.toLowerCase()}.png`;
+    // const createBg = document.getElementById('create');
 
     const getData = async () => {
         try {
             const response = await axios.get<DataType[]>("/api/" + (props.name).toLowerCase());
-            console.log(response.data)
+            console.log(response.data);
             setData(response.data);
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -33,7 +33,6 @@ export default function List(props : Props) {
     }
 
     useEffect(() => {
-
         getData();
     }, []);
 
@@ -43,7 +42,6 @@ export default function List(props : Props) {
         try {
             await axios.delete(`api/${props.name.toLowerCase()}/${id}`);
             getData();
-
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 console.error(err.message);
@@ -59,7 +57,13 @@ export default function List(props : Props) {
 
     const handleCreate = () => {
         setShowPopUp(true);
+        // createBg?.classList.add('active');
     }
+
+    const handleCloseModal = () => {
+        setShowPopUp(false);
+        getData();
+    };
 
     return (
         <>
@@ -68,7 +72,6 @@ export default function List(props : Props) {
                 <div className={"container-list"}>
                     <h1>{props.name}s List</h1>
                     <div className="search-bar">
-                        /* From Uiverse.io by Shaidend */
                         <div className="InputContainer">
                             <input
                                 placeholder="Search"
@@ -89,25 +92,21 @@ export default function List(props : Props) {
 
                     </div>
                     <div className={"container-card"}>
-                        {data.map(item => (
+                        {data.map((item,index) => (
 
                             <div key={item.id} className="card">
                                 <div className="card-img">
                                     <img className={item.image ? "image" : "image2"} src={item.image ? item.image : image} alt={"image"}/>
                                 </div>
                                 <div className="card-info">
-                                    {/*<p className="text-title">{item.name} - {item.id}</p>*/}
-                                    {/*<p className="text-body">Stock: {item.stock}</p>*/}
-                                    {data.map((item, index) => (
-                                        <div key={index} style={{color: "white"}}>
-                                            {Object.keys(item).map((key, keyIndex) => (
-                                                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                                                    <p className="text-title" key={keyIndex}>{key}:</p>
-                                                    <p className="text-body">{item[key]}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ))}
+                                    <div key={index} style={{color: "white"}}>
+                                        {Object.keys(item).map((key, keyIndex) => (
+                                            <div key={keyIndex} style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                                                <p className="text-title">{key}:</p>
+                                                <p className="text-body">{item[key]}</p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div className="card-footer">
                                     <span className="text-title">${item.price}</span>
@@ -166,7 +165,7 @@ export default function List(props : Props) {
                     <button onClick={handleBack} className={"backButton"}>Go Back</button>
                 </div>
                 <div>
-                    {showPopUp ? <Create></Create> : ""}
+                    {showPopUp ? <Create name={props.name} onClose={handleCloseModal} isActive={showPopUp}></Create> : ""}
                 </div>
                 </>
                 : <App/>}
