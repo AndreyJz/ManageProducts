@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @RestController
@@ -23,7 +24,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> view(@PathVariable String id) {
-        Optional<Customer> customerOptional = customerService.findCustomerById(id);
+        Optional<Customer> customerOptional = customerService.findCustomerById(id.toLowerCase(Locale.ROOT));
         if (customerOptional.isPresent()) {
             return ResponseEntity.ok(customerOptional.orElseThrow());
         }
